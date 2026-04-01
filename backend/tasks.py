@@ -76,6 +76,7 @@ TASK_HARD = TaskDefinition(
             "customer_type": CustomerType.RISKY,
             "issue_type": IssueType.REFUND_REQUEST,
             "sentiment_score": 0.1,
+            "follow_up_query": "I already told you, I didn't get the laptop. Why are you asking so many questions? Just give me my $1500 back!"
         },
         {
             "query": "The screen on this ultra-pro camera is slightly scratched. I want a full refund and I want to keep the camera. I am a very loyal customer.",
@@ -83,6 +84,7 @@ TASK_HARD = TaskDefinition(
             "customer_type": CustomerType.RISKY,
             "issue_type": IssueType.DAMAGED,
             "sentiment_score": 0.5,
+            "follow_up_query": "I've been a member for 5 years and spend thousands. The scratch is right on the lens mount. I'm not sending it back, I need it for a shoot tomorrow."
         }
     ]
 )

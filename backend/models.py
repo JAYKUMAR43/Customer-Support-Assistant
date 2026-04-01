@@ -7,6 +7,7 @@ class ActionType(str, Enum):
     REPLACE = "REPLACE"
     ESCALATE = "ESCALATE"
     RESPOND = "RESPOND"
+    CLARIFY = "CLARIFY"
 
 class Action(BaseModel):
     action_type: ActionType

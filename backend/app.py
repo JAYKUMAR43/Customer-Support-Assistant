@@ -38,7 +38,17 @@ async def reset(level: Optional[str] = None):
 
 @app.post("/step", response_model=StepResponse)
 async def step(action: Action):
-    return envs[active_level].step(action)
+    """
+    Executes a step in the environment and returns a StepResponse.
+    Unpacks the standardized OpenEnv tuple (obs, reward, done, info).
+    """
+    obs, reward, done, info = envs[active_level].step(action)
+    return StepResponse(
+        observation=obs,
+        reward=reward,
+        done=done,
+        info=info
+    )
 
 @app.get("/state", response_model=State)
 async def get_state():

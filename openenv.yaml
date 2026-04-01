@@ -20,13 +20,14 @@ observation_space:
     issue_type: "enum [DELAYED, DAMAGED, WRONG_ITEM, REFUND_REQUEST]"
     sentiment_score: "float (0.0-1.0)"
     conversation_history: "list of {role: string, content: string}"
+    task_id: "text"
 
 action_space:
-    action_type: "enum [REFUND, REPLACE, ESCALATE, RESPOND]"
+    action_type: "enum [REFUND, REPLACE, ESCALATE, RESPOND, CLARIFY]"
     explanation: "text"
     response_text: "text"
 
-reward_range: [-12.0, 15.0]
+reward_range: [0.0, 1.0]
 tasks:
     - id: "TASK_EASY"
       level: "easy"
