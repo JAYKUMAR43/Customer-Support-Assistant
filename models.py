@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Dict
 from pydantic import BaseModel, Field
 
 class ActionType(str, Enum):
@@ -7,6 +7,7 @@ class ActionType(str, Enum):
     REPLACE = "REPLACE"
     ESCALATE = "ESCALATE"
     RESPOND = "RESPOND"
+    CLARIFY = "CLARIFY"
 
 class Action(BaseModel):
     action_type: ActionType
@@ -18,23 +19,29 @@ class CustomerType(str, Enum):
     FREQUENT = "FREQUENT"
     RISKY = "RISKY"
 
-class ProductIssue(str, Enum):
-    NONE = "NONE"
+class IssueType(str, Enum):
+    DELAYED = "DELAYED"
     DAMAGED = "DAMAGED"
     WRONG_ITEM = "WRONG_ITEM"
-    DELAYED = "DELAYED"
+    REFUND_REQUEST = "REFUND_REQUEST"
+
+class ChatTurn(BaseModel):
+    role: str # 'customer' or 'agent'
+    content: str
 
 class Observation(BaseModel):
     customer_query: str
     order_value: float
-    days_since_delivery: int
     customer_type: CustomerType
-    product_issue: ProductIssue
+    issue_type: IssueType
+    sentiment_score: float = Field(..., description="0.0 (negative) to 1.0 (positive)")
+    conversation_history: List[ChatTurn] = []
     task_id: str
 
 class Reward(BaseModel):
     value: float
     reason: str
+    business_impact: float = 0.0
     is_terminal: bool = False
 
 class State(BaseModel):

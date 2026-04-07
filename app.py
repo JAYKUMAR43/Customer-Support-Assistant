@@ -1,8 +1,8 @@
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import Optional
-import json
+from typing import Optional, Dict
+import os
 
 from models import Observation, Action, StepResponse, State
 from env import EcommerceEnv
@@ -18,25 +18,36 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Global environment instance
-env_instance = EcommerceEnv(task_level="Easy")
+# In-memory environment storage
+envs: Dict[str, EcommerceEnv] = {
+    "Easy": EcommerceEnv(task_level="Easy"),
+    "Medium": EcommerceEnv(task_level="Medium"),
+    "Hard": EcommerceEnv(task_level="Hard")
+}
 
-@app.post("/reset", response_model=Observation)
-async def reset(level: Optional[str] = "Easy"):
+# Current global active level
+active_level = "Easy"
+
+@app.api_route("/reset", methods=["GET", "POST"], response_model=Observation)
+async def reset(level: Optional[str] = None):
     """Resets the environment and optionally changes the task difficulty."""
-    global env_instance
-    if level not in ["Easy", "Medium", "Hard"]:
-        level = "Easy"
+    global active_level
+    if level and level in envs:
+        active_level = level
     
-    # Re-initialize the environment with the requested difficulty
-    env_instance = EcommerceEnv(task_level=level)
-    return env_instance.reset()
+    return envs[active_level].reset()
 
 @app.post("/step", response_model=StepResponse)
 async def step(action: Action):
     """Executes a single step in the environment."""
     try:
-        return env_instance.step(action)
+        obs, reward, done, info = envs[active_level].step(action)
+        return StepResponse(
+            observation=obs,
+            reward=reward,
+            done=done,
+            info=info
+        )
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -44,9 +55,16 @@ async def step(action: Action):
 async def get_state():
     """Returns the current state of the environment."""
     try:
-        return env_instance.state()
+        return envs[active_level].state()
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/config")
+async def get_config():
+    return {
+        "active_level": active_level,
+        "available_levels": list(envs.keys())
+    }
 
 @app.get("/")
 async def root():
@@ -54,5 +72,5 @@ async def root():
     return {
         "status": "online",
         "message": "OpenEnv Backend API is running",
-        "endpoints": ["/reset", "/step", "/state"]
+        "endpoints": ["/reset", "/step", "/state", "/config"]
     }
