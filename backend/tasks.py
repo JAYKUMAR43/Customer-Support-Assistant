@@ -1,5 +1,6 @@
 import random
 from typing import List, Dict
+# Version 1.0.1 - Fixed Relative Imports
 from .models import Observation, CustomerType, IssueType, ChatTurn
 
 class TaskDefinition:
