@@ -6,7 +6,7 @@ author: "Antigravity AI"
 
 environment:
     type: "HTTP"
-    port: 8000
+    port: 7860
     endpoints:
         reset: "/reset"
         step: "/step"
