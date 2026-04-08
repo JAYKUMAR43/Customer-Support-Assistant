@@ -76,7 +76,18 @@ async def step(action: Action, task: Optional[str] = None):
         else:
             obs = env.current_state.observation
             
-        obs.task_id = forced_task
+        task_map = {
+            "easy": "TASK_EASY",
+            "medium": "TASK_MEDIUM",
+            "hard": "TASK_HARD"
+        }
+
+        if hasattr(obs, "task_id"):
+            obs.task_id = task_map[forced_task]
+        else:
+            setattr(obs, "task_id", task_map[forced_task])
+
+        print(f"[DEBUG] Task ID: {task_map[forced_task]}", flush=True)
         
         # 5. Return Response
         return StepResponse(
