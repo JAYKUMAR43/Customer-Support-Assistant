@@ -10,17 +10,16 @@ load_dotenv()
 
 # STEP 1: ENVIRONMENT VARIABLES CHECK (STRICT)
 # Using direct os.environ[...] to ensure validator can detect missing required variables
-API_KEY = os.environ["API_KEY"]
+HF_TOKEN = os.environ["HF_TOKEN"]
 API_BASE_URL = os.environ["API_BASE_URL"]
 MODEL_NAME = os.environ.get("MODEL_NAME", "gpt-4o-mini")
-HF_TOKEN = os.environ.get("HF_TOKEN", "")
 
 # Backend URL for OpenEnv
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:7860")
 
 # STEP 2: LLM PROXY COMPLIANCE
-# Initializing OpenAI client with specific proxy configuration
-client = OpenAI(api_key=API_KEY, base_url=API_BASE_URL)
+# Initializing OpenAI client with specific proxy configuration using HF_TOKEN
+client = OpenAI(api_key=HF_TOKEN, base_url=API_BASE_URL)
 
 def simple_llm_call(query: str) -> str:
     """Basic function to send a query to the LLM and return a response."""
@@ -28,7 +27,8 @@ def simple_llm_call(query: str) -> str:
     completion = client.chat.completions.create(
         model=MODEL_NAME,
         messages=[{"role": "user", "content": query}],
-        timeout=15
+        timeout=15,
+        max_tokens=50
     )
     return completion.choices[0].message.content or ""
 
