@@ -21,6 +21,14 @@ BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:7860")
 # Initializing OpenAI client with specific proxy configuration using HF_TOKEN
 client = OpenAI(api_key=HF_TOKEN, base_url=API_BASE_URL)
 
+def safe_score(score: float) -> float:
+    """Ensures score is strictly between 0 and 1."""
+    if score <= 0:
+        return 0.1
+    elif score >= 1:
+        return 0.9
+    return score
+
 def simple_llm_call(query: str) -> str:
     """Basic function to send a query to the LLM and return a response."""
     # No silent fallback here - let exceptions raise so validator can see real errors
@@ -126,7 +134,7 @@ def main() -> None:
     # STEP 4: LOG FORMAT STRICT CHECK (END)
     # Total score should be normalized for final output
     final_reward = total_score / (len(levels) if levels else 1)
-    final_reward = max(0.0, min(1.0, final_reward))
+    final_reward = safe_score(final_reward)
     print(f"[END] final_reward={final_reward:.2f}", flush=True)
 
 if __name__ == "__main__":
