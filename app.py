@@ -41,21 +41,14 @@ async def reset(level: Optional[str] = None):
 @app.api_route("/step", methods=["GET", "POST"], response_model=StepResponse)
 async def step(request: Request):
     """
-    FORCED TIME-BASED TASK ROTATION - Phase 2 Validator Bypass (Safe).
-    Uses millisecond timestamp to select task, avoiding process-reset issues.
-    Returns success scores with strictly (0.1, 0.9) compliance.
+    Fixed /step endpoint to ensure task consistency and score compliance.
     """
+    global active_level
     try:
-        # 1. Force 3 tasks cycle via Time
-        tasks = ["easy", "medium", "hard"]
-        idx = int(time.time() * 1000) % 3
-        forced_task = tasks[idx]
+        # 1. Use the level set by /reset (No more time-based rotation)
+        env = envs[active_level]
         
-        # 2. Select Env based on forced task
-        level_map = {"easy": "Easy", "medium": "Medium", "hard": "Hard"}
-        env = envs[level_map[forced_task]]
-        
-        # 3. Parse action or fallback safely
+        # 2. Parse action or fallback safely
         try:
             body = await request.json()
             action = Action(**body)
@@ -66,35 +59,33 @@ async def step(request: Request):
                 response_text="Processing your request."
             )
 
-        # 4. Execute step while ensuring environment is reset
-        if not env.current_state:
-            _ = env.reset()
+        # 3. Auto-reset if environment is already done
+        if not env.current_state or env.current_state.done:
+            print(f"[DEBUG] Environment {active_level} was done. Auto-resetting.", flush=True)
+            env.reset()
             
-        obs, reward, done, info = env.step(action)
+        # 4. Execute step
+        result = env.step(action)
         
         # 5. Map Fixed Task IDs for Grader Compliance
         task_map = {
-            "easy": "TASK_EASY",
-            "medium": "TASK_MEDIUM",
-            "hard": "TASK_HARD"
+            "Easy": "TASK_EASY",
+            "Medium": "TASK_MEDIUM",
+            "Hard": "TASK_HARD"
         }
-        
-        if hasattr(obs, "task_id"):
-            obs.task_id = task_map[forced_task]
-        else:
-            setattr(obs, "task_id", task_map[forced_task])
+        setattr(result.observation, "task_id", task_map[active_level])
 
-        # 6. Apply strictly safe reward clamping
-        reward = max(0.1, min(reward, 0.9))
+        # 6. Apply strictly safe reward clamping (strictly between 0.1 and 0.9)
+        score = max(0.1, min(result.reward, 0.9))
         
         # 7. Debug Logging (Required by validator)
-        print(f"[DEBUG] Task ID: {task_map[forced_task]} | Reward: {reward}", flush=True)
+        print(f"[DEBUG] Consistently returning Task: {active_level} | TaskID: {task_map[active_level]} | Score: {score}", flush=True)
 
         return StepResponse(
-            observation=obs,
-            reward=reward,
-            done=True, # Forced single-turn for validator speed
-            info={"forced_task": forced_task, "reason": "Validator Bypass"}
+            observation=result.observation,
+            reward=score,
+            done=result.done,
+            info=result.info if result.info else {}
         )
 
     except Exception as e:
