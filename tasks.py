@@ -1,6 +1,7 @@
 import random
 from typing import List, Dict
-from models import Observation, CustomerType, IssueType, ChatTurn
+# Version 1.0.1 - Fixed Relative Imports
+from .models import Observation, CustomerType, IssueType, ChatTurn
 
 class TaskDefinition:
     def __init__(self, id: str, level: str, scenarios: List[Dict]):

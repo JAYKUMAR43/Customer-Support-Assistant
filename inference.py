@@ -14,7 +14,6 @@ load_dotenv()
 HF_TOKEN = os.getenv("HF_TOKEN")
 API_BASE_URL = os.getenv("API_BASE_URL")
 MODEL_NAME = os.getenv("MODEL_NAME", "gpt-4o-mini")
-# Root inference uses 7860 as default or whatever the container exposes
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:7860")
 
 # LLM CLIENT INIT

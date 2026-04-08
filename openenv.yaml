@@ -1,7 +1,7 @@
 name: "fullstack-ecommerce-support-env"
-version: "1.0.0"
+version: "1.0.1"
 description: "A high-end, full-stack environment for training e-commerce support agents with real-time UI/UX dashboard."
-tags: ["openenv", "fullstack", "react", "fastapi", "customer-support"]
+tags: ["openenv", "fullstack", "pytorch-hackathon", "fastapi", "customer-support"]
 author: "Antigravity AI"
 
 environment:
@@ -28,10 +28,14 @@ action_space:
     response_text: "text"
 
 reward_range: [0.0, 1.0]
+
 tasks:
     - id: "task_easy"
       level: "easy"
+      description: "Simple tracking inquiry"
     - id: "task_medium"
       level: "medium"
+      description: "Damaged item resolution"
     - id: "task_hard"
       level: "hard"
+      description: "Potential fraud investigation"

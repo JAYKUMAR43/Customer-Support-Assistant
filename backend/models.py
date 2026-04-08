@@ -13,6 +13,7 @@ class Action(BaseModel):
     action_type: ActionType
     explanation: str = Field(..., description="Reasoning for the action")
     response_text: str = Field(..., description="Message sent to the customer")
+    task: Optional[str] = Field(None, description="Current task ID (optional)")
 
 class CustomerType(str, Enum):
     NEW = "NEW"

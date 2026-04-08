@@ -1,7 +1,8 @@
 from typing import Optional, Tuple, Any
-from models import Observation, Action, Reward, State, StepResponse, ChatTurn, ActionType
-from tasks import TASKS
-from grader import Grader
+# Version 1.0.1 - Fixed Relative Imports
+from .models import Observation, Action, Reward, State, StepResponse, ChatTurn, ActionType
+from .tasks import TASKS
+from .grader import Grader
 
 class EcommerceEnv:
     def __init__(self, task_level: str = "Easy"):
@@ -21,7 +22,7 @@ class EcommerceEnv:
         )
         return obs
 
-    def step(self, action: Action) -> Tuple[Observation, float, bool, dict]:
+    def step(self, action: Action) -> StepResponse:
         """
         Executes a step in the environment.
         Returns: (observation, reward, done, info)
@@ -70,11 +71,11 @@ class EcommerceEnv:
             "step_count": self.current_state.step_count
         }
 
-        return (
-            self.current_state.observation, 
-            reward_val, 
-            self.current_state.done, 
-            self.current_state.info
+        return StepResponse(
+            observation=self.current_state.observation, 
+            reward=reward_val, 
+            done=self.current_state.done, 
+            info=self.current_state.info
         )
 
     def state(self) -> State:
