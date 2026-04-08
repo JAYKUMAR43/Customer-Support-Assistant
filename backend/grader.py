@@ -106,11 +106,11 @@ class Grader:
             reward, reason, business_impact = grade_hard(observation, action)
         else:
             # Fallback for other task ID formats
-            if "TASK_EASY" in observation.task_id:
+            if "task_easy" in observation.task_id or "TASK_EASY" in observation.task_id:
                 reward, reason, business_impact = grade_easy(observation, action)
-            elif "TASK_MEDIUM" in observation.task_id:
+            elif "task_medium" in observation.task_id or "TASK_MEDIUM" in observation.task_id:
                 reward, reason, business_impact = grade_medium(observation, action)
-            elif "TASK_HARD" in observation.task_id:
+            elif "task_hard" in observation.task_id or "TASK_HARD" in observation.task_id:
                 reward, reason, business_impact = grade_hard(observation, action)
             
         # 🎯 Dynamic Bonuses (Up to 0.02 total to avoid 1.0)

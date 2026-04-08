@@ -29,9 +29,9 @@ action_space:
 
 reward_range: [0.0, 1.0]
 tasks:
-    - id: "TASK_EASY"
+    - id: "task_easy"
       level: "easy"
-    - id: "TASK_MEDIUM"
+    - id: "task_medium"
       level: "medium"
-    - id: "TASK_HARD"
+    - id: "task_hard"
       level: "hard"
