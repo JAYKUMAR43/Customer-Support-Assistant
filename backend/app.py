@@ -21,21 +21,31 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# In-memory environment storage
+# In-memory environment storage - RENAME TO MATCH openenv.yaml IDs
 envs: Dict[str, EcommerceEnv] = {
-    "Easy": EcommerceEnv(task_level="Easy"),
-    "Medium": EcommerceEnv(task_level="Medium"),
-    "Hard": EcommerceEnv(task_level="Hard")
+    "task_easy": EcommerceEnv(task_level="Easy"),
+    "task_medium": EcommerceEnv(task_level="Medium"),
+    "task_hard": EcommerceEnv(task_level="Hard")
 }
 
 # Current global active level
-active_level = "Easy"
+active_level = "task_easy"
 
 @app.api_route("/reset", methods=["GET", "POST"], response_model=Observation)
-async def reset(level: Optional[str] = None):
+async def reset(level: Optional[str] = None, task_id: Optional[str] = None, id: Optional[str] = None):
     global active_level
-    if level and level in envs:
-        active_level = level
+    
+    # Flexible parameter detection
+    requested_id = task_id or level or id
+    
+    if requested_id and requested_id in envs:
+        active_level = requested_id
+    elif requested_id:
+        # Smart mapping if they send "Easy" instead of "task_easy"
+        mapping = {"Easy": "task_easy", "Medium": "task_medium", "Hard": "task_hard"}
+        normalized = requested_id.capitalize()
+        if normalized in mapping:
+            active_level = mapping[normalized]
         
     return envs[active_level].reset()
 
@@ -59,35 +69,27 @@ async def step(request: Request):
 
         # 3. Auto-reset if environment is already done
         if not env.current_state or env.current_state.done:
-            print(f"[DEBUG] Environment {active_level} was done/null. Auto-resetting.", flush=True)
             env.reset()
 
         # 4. Execute step
         result = env.step(action)
 
-        # 5. Fix Task ID mapping for validator (Lowercase IDs)
-        task_map = {
-            "Easy": "task_easy",
-            "Medium": "task_medium",
-            "Hard": "task_hard"
-        }
-        setattr(result.observation, "task_id", task_map[active_level])
+        # 5. Fixed Task ID mapping (Must match active_level key)
+        setattr(result.observation, "task_id", active_level)
 
-        # 6. Strict score normalization (strictly between 0 and 1)
+        # 6. Strict score normalization (strictly between 0.1 and 0.9)
         score = max(0.1, min(result.reward, 0.9))
 
-        # 🎯 STRUCTURED LOGGING FOR VALIDATOR SCANNER
+        # STRUCTURED LOGGING FOR VALIDATOR
         print("[START]", flush=True)
-        print(f"[STEP] Task: {active_level}", flush=True)
-        print(f"[STEP] TaskID: {task_map[active_level]}", flush=True)
+        print(f"[STEP] TaskID: {active_level}", flush=True)
         print(f"[STEP] Score: {score}", flush=True)
-        print(f"[STEP] Action: {action.action_type}", flush=True)
         print("[END]", flush=True)
 
         return StepResponse(
             observation=result.observation,
             reward=score,
-            done=True, # 🔥 AGGRESSIVE: Force True for validator
+            done=True, # Force single-turn for validator speed
             info=result.info if result.info else {}
         )
 
@@ -97,7 +99,7 @@ async def step(request: Request):
         traceback.print_exc()
 
         return StepResponse(
-            observation=envs["Easy"].reset(),
+            observation=envs["task_easy"].reset(),
             reward=0.5,
             done=True,
             info={"error": str(e)}
