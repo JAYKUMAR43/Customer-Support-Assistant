@@ -58,7 +58,7 @@ async def step(request: Request):
 
         result = env.step(action)
         setattr(result.observation, "task_id", active_level)
-        score = max(0.1, min(result.reward, 0.9))
+        score = round(max(0.1, min(result.reward, 0.9)), 2)
 
         # STRUCTURED LOGGING
         print(f"[STEP] task_id={active_level} reward={score:.2f} done=True", flush=True)

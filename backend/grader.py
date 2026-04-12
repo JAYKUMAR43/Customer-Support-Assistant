@@ -9,8 +9,9 @@ def safe_score(score):
     try:
         score = float(score)
     except Exception:
-        return 0.5
-    return max(0.1, min(score, 0.9))
+        return 0.50
+    clamped = max(0.1, min(score, 0.9))
+    return round(clamped, 2)
 
 def grade_easy(observation: Observation, action: Action) -> tuple[float, str, float]:
     reward = 0.12  # Distinct baseline for Easy

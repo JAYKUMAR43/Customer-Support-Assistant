@@ -25,8 +25,8 @@ def safe_score(score: float) -> float:
     try:
         score = float(score)
     except:
-        return 0.5
-    return max(0.1, min(score, 0.9))
+        return 0.50
+    return round(max(0.1, min(score, 0.9)), 2)
 
 def get_action_from_llm(obs_dict: Dict[str, Any]) -> Action:
     fallback = Action(
