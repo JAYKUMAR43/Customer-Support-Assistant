@@ -7,26 +7,7 @@ from .tasks import TASK_EASY, TASK_MEDIUM, TASK_HARD, TASKS
 from .grader import Grader
 
 # ✅ Yeh line SABSE IMPORTANT hai — validator yahi dhundhta hai
-SUBMISSION_TASKS = [
-    {
-        "id": "TASK_EASY",
-        "level": "Easy",
-        "task": TASK_EASY,
-        "grader": Grader.evaluate,
-    },
-    {
-        "id": "TASK_MEDIUM",
-        "level": "Medium",
-        "task": TASK_MEDIUM,
-        "grader": Grader.evaluate,
-    },
-    {
-        "id": "TASK_HARD",
-        "level": "Hard",
-        "task": TASK_HARD,
-        "grader": Grader.evaluate,
-    },
-]
+from .submission import SUBMISSION_TASKS
 
 # Yeh bhi expose karo — kuch validators isko dhundhte hain
 __all__ = [
