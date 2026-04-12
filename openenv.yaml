@@ -27,15 +27,20 @@ action_space:
     explanation: "text"
     response_text: "text"
 
-reward_range: [0.0, 1.0]
+reward_range: [0.1, 0.9]
 
 tasks:
     - id: "task_easy"
       level: "easy"
       description: "Simple tracking inquiry"
+      grader: "backend.grader.Grader.evaluate"  # ✅ grader added
+      
     - id: "task_medium"
       level: "medium"
       description: "Damaged item resolution"
+      grader: "backend.grader.Grader.evaluate"  # ✅ grader added
+      
     - id: "task_hard"
       level: "hard"
       description: "Potential fraud investigation"
+      grader: "backend.grader.Grader.evaluate"  # ✅ grader added

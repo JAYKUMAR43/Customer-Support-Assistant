@@ -115,13 +115,28 @@ async def get_config():
     return {
         "active_level": active_level,
         "available_levels": list(envs.keys()),
+        "reward_range": [0.1, 0.9],  # ✅ yeh add karo
         "tasks": [
-            {"id": "task_easy", "name": "Standard Return", "grader": True},
-            {"id": "task_medium", "name": "Damaged Delivery", "grader": True},
-            {"id": "task_hard", "name": "Policy Exception", "grader": True}
+            {
+                "id": "task_easy",
+                "name": "Standard Return",
+                "grader": True,
+                "grader_path": "backend.grader.Grader.evaluate"  # ✅ yeh add karo
+            },
+            {
+                "id": "task_medium",
+                "name": "Damaged Delivery",
+                "grader": True,
+                "grader_path": "backend.grader.Grader.evaluate"  # ✅ yeh add karo
+            },
+            {
+                "id": "task_hard",
+                "name": "Policy Exception",
+                "grader": True,
+                "grader_path": "backend.grader.Grader.evaluate"  # ✅ yeh add karo
+            }
         ]
     }
-
 # Serving built frontend (HF Space requirement)
 frontend_path = os.path.join(os.path.dirname(__file__), "../frontend/dist")
 if os.path.exists(frontend_path):
