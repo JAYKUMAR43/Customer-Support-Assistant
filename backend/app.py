@@ -78,7 +78,7 @@ async def step(request: Request):
         setattr(result.observation, "task_id", active_level)
 
         # 6. Strict score normalization (strictly between 0.1 and 0.9)
-        score = max(0.1, min(result.reward, 0.9))
+        score = round(max(0.11, min(result.reward, 0.89)), 2)
 
         # STRUCTURED LOGGING FOR VALIDATOR (Backend Monitor)
         print(f"[STEP] task_id={active_level} reward={score:.2f} done=True", flush=True)

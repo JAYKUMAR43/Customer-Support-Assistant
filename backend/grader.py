@@ -16,7 +16,7 @@ def safe_score(score):
 def grade_easy(observation: Observation, action: Action) -> tuple[float, str, float]:
     reward = 0.12  # Distinct baseline for Easy
     reason = ""
-    business_impact = 0.0
+    business_impact = 0.11
     
     if action.action_type == ActionType.RESPOND:
         reward = 0.82
@@ -34,7 +34,7 @@ def grade_easy(observation: Observation, action: Action) -> tuple[float, str, fl
 def grade_medium(observation: Observation, action: Action) -> tuple[float, str, float]:
     reward = 0.15  # Distinct baseline for Medium
     reason = ""
-    business_impact = 0.0
+    business_impact = 0.11
     
     if observation.issue_type == IssueType.DAMAGED:
         if action.action_type in [ActionType.REPLACE, ActionType.REFUND]:
@@ -62,7 +62,7 @@ def grade_medium(observation: Observation, action: Action) -> tuple[float, str, 
 def grade_hard(observation: Observation, action: Action) -> tuple[float, str, float]:
     reward = 0.18  # Distinct baseline for Hard
     reason = ""
-    business_impact = 0.0
+    business_impact = 0.11
     
     if observation.customer_type == CustomerType.RISKY:
         if action.action_type == ActionType.CLARIFY:
@@ -94,7 +94,7 @@ class Grader:
         """
         reward = 0.50  # Absolute fallback
         reason = "No specific task grader matched."
-        business_impact = 0.0
+        business_impact = 0.11
 
         # Route to specific graders
         task_info = str(observation.task_id).lower()

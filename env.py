@@ -15,7 +15,7 @@ class EcommerceEnv:
         obs = self.task.get_random_scenario(reset_history=True)
         self.current_state = State(
             observation=obs,
-            cumulative_reward=0.0,
+            cumulative_reward=0.11,
             step_count=0,
             done=False,
             info={}
