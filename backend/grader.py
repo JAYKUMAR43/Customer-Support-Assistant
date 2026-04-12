@@ -10,7 +10,7 @@ def safe_score(score):
         score = float(score)
     except Exception:
         return 0.50
-    clamped = max(0.1, min(score, 0.9))
+    clamped = max(0.11, min(score, 0.89))
     return round(clamped, 2)
 
 def grade_easy(observation: Observation, action: Action) -> tuple[float, str, float]:
@@ -92,7 +92,7 @@ class Grader:
         Returns (reward_value, reason, business_impact)
         Reward is normalized to strictly (0.1, 0.9) for hackathon compliance.
         """
-        reward = 0.1  # Absolute fallback
+        reward = 0.50  # Absolute fallback
         reason = "No specific task grader matched."
         business_impact = 0.0
 
